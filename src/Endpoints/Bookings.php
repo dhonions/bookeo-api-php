@@ -29,9 +29,9 @@ class Bookings extends Client
      * @param string|null $lastUpdatedStartTime if specified, only include bookings that were last changed (or created) on or after this time. If specified, lastUpdatedEndTime must be specified as well.
      * @param string|null $lastUpdatedEndTime   if specified, only include bookings that were last changed (or created) on or before this time. If specified, lastUpdatedStartTime must be specified as well. The maximum allowed interval is 31 days.
      * @param string|null $productId            if not specified, include bookings for all products. If specified, include only bookings for this product
-     * @param bool        $includeCanceled      if true, canceled bookings are included. If false, only bookings that are not canceled are included
-     * @param bool        $expandCustomer       if true, the full details of the customer are included (provided the application has read permission over the customer)
-     * @param bool        $expandParticipants   if true, full details of the participants are included (provided the application has read permission over the participant)
+     * @param string        $includeCanceled      if true, canceled bookings are included. If false, only bookings that are not canceled are included
+     * @param string        $expandCustomer       if true, the full details of the customer are included (provided the application has read permission over the customer)
+     * @param string        $expandParticipants   if true, full details of the participants are included (provided the application has read permission over the participant)
      *
      * @return \Bookeo\Interfaces\QueryInterface
      */
@@ -44,9 +44,9 @@ class Bookings extends Client
         string $lastUpdatedStartTime = null,
         string $lastUpdatedEndTime = null,
         string $productId = null,
-        bool $includeCanceled = false,
-        bool $expandCustomer = false,
-        bool $expandParticipants = false
+        string $includeCanceled = "false",
+        string $expandCustomer = "false",
+        string $expandParticipants = "false"
     ): QueryInterface {
 
         if (!empty($itemsPerPage)) {
@@ -97,12 +97,12 @@ class Bookings extends Client
      * Retrieve a booking by its booking number
      *
      * @param string $booking_id
-     * @param bool   $expandCustomer     if true, the full details of the customer are included (provided the application has read permission over the customer)
-     * @param bool   $expandParticipants if true, full details of the participants are included (provided the application has read permission over the participant)
+     * @param string   $expandCustomer     if true, the full details of the customer are included (provided the application has read permission over the customer)
+     * @param string   $expandParticipants if true, full details of the participants are included (provided the application has read permission over the participant)
      *
      * @return $this
      */
-    public function __invoke(string $booking_id, bool $expandCustomer = false, bool $expandParticipants = false)
+    public function __invoke(string $booking_id, string $expandCustomer = "false", string $expandParticipants = "false")
     {
         if (!empty($expandCustomer)) {
             $this->appendToQuery('expandCustomer', $expandCustomer);
@@ -129,10 +129,10 @@ class Bookings extends Client
      *
      * @param \Bookeo\Models\Booking $create         if specified, deletes the hold with the given id
      * @param string|null            $previousHoldId whether to send a notification email (and possibly SMS, depending on settings) to eligible users
-     * @param bool|null              $notifyUsers    whether to send a confirmation email to the customer
-     * @param bool|null              $notifyCustomer
-     * @param bool|null              $sendCustomerReminders
-     * @param bool|null              $sendCustomerThankyou
+     * @param string|null              $notifyUsers    whether to send a confirmation email to the customer
+     * @param string|null              $notifyCustomer
+     * @param string|null              $sendCustomerReminders
+     * @param string|null              $sendCustomerThankyou
      * @param string|null            $mode           if present and set to "backend", treats the operation as if it was done by a manager. This relaxes some constraints such as when is it possible to change a booking, participants limits for the booking, booking limits (time in advance), and so on.
      *
      * @return \Bookeo\Interfaces\QueryInterface
@@ -140,10 +140,10 @@ class Bookings extends Client
     public function create(
         Booking $create,
         string $previousHoldId = null,
-        bool $notifyUsers = null,
-        bool $notifyCustomer = null,
-        bool $sendCustomerReminders = null,
-        bool $sendCustomerThankyou = null,
+        string $notifyUsers = null,
+        string $notifyCustomer = null,
+        string $sendCustomerReminders = null,
+        string $sendCustomerThankyou = null,
         string $mode = null
     ): QueryInterface {
 
@@ -178,15 +178,15 @@ class Bookings extends Client
     /**
      * Update an existing booking
      *
-     * @param bool|null   $notifyUsers    if true, notification emails and SMS are sent to authorized users
-     * @param bool|null   $notifyCustomer if true, a notification email is sent to the customer
+     * @param string|null   $notifyUsers    if true, notification emails and SMS are sent to authorized users
+     * @param string|null   $notifyCustomer if true, a notification email is sent to the customer
      * @param string|null $mode           if present and set to "backend", treats the operation as if it was done by a manager. This relaxes some constraints such as when is it possible to change a booking, participants limits for the booking, booking limits (time in advance), and so on.
      *
      * @return \Bookeo\Interfaces\QueryInterface
      */
     public function update(
-        bool $notifyUsers = null,
-        bool $notifyCustomer = null,
+        string $notifyUsers = null,
+        string $notifyCustomer = null,
         string $mode = null
     ): QueryInterface {
 
@@ -212,21 +212,21 @@ class Bookings extends Client
      *
      * Cancel a booking. Cancelled bookings remain in the system, but no longer show up in the calendar or take up seats.
      *
-     * @param bool|null   $notifyUsers             if true, notification emails and SMS are sent to authorized users
-     * @param bool|null   $notifyCustomer          if true, a notification email is sent to the customer
-     * @param bool|null   $applyCancellationPolicy if true, the default cancellation policy is applied. This may cause a charge on the credit card on file, if a cancellation fee is due
-     * @param bool|null   $trackInCustomerHistory  if true, the cancellation will be tracked in the customer's stats
-     * @param bool|null   $cancelRemainingSeries   if true, and this booking is part of a recurring series, all following bookings will be cancelled as well
+     * @param string|null   $notifyUsers             if true, notification emails and SMS are sent to authorized users
+     * @param string|null   $notifyCustomer          if true, a notification email is sent to the customer
+     * @param string|null   $applyCancellationPolicy if true, the default cancellation policy is applied. This may cause a charge on the credit card on file, if a cancellation fee is due
+     * @param string|null   $trackInCustomerHistory  if true, the cancellation will be tracked in the customer's stats
+     * @param string|null   $cancelRemainingSeries   if true, and this booking is part of a recurring series, all following bookings will be cancelled as well
      * @param string|null $reason                  an optional reason that explains why the booking was cancelled
      *
      * @return \Bookeo\Interfaces\QueryInterface
      */
     public function delete(
-        bool $notifyUsers = null,
-        bool $notifyCustomer = null,
-        bool $applyCancellationPolicy = null,
-        bool $trackInCustomerHistory = null,
-        bool $cancelRemainingSeries = null,
+        string $notifyUsers = null,
+        string $notifyCustomer = null,
+        string $applyCancellationPolicy = null,
+        string $trackInCustomerHistory = null,
+        string $cancelRemainingSeries = null,
         string $reason = null
     ): QueryInterface {
 
